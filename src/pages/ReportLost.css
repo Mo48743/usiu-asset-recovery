@@ -1,0 +1,60 @@
+/* src/pages/ReportLost.css */
+.report-lost-container {
+  background: white;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.report-lost-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.report-lost-form input,
+.report-lost-form textarea,
+.report-lost-form button {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.report-lost-form textarea {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 150px;
+}
+
+.report-lost-form button {
+  background-color: #1B3B6F;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.report-lost-form button:hover {
+  background-color: #16315c;
+}
+
+/* Make sure body takes full height but prevents extra vertical scroll */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Optional: limit page height */
+main {
+  flex-grow: 1;
+}
