@@ -23,9 +23,21 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      const user = userCredential.user;
       alert('Login successful!');
-      navigate('/report-lost'); // ✅ This line was changed to match your route
+
+      // ✅ Redirect admin to admin dashboard
+      if (user.email === 'morinea@usiu.ac.ke') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/report-lost'); // Regular user redirection
+      }
     } catch (error) {
       console.error('Login error:', error.message);
       alert('Login failed: ' + error.message);
