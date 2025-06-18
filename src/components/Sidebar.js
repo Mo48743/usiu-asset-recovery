@@ -1,11 +1,26 @@
 // src/components/Sidebar.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // ✅ Make sure this path is correct
+import { useAuth } from '../context/AuthContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const { currentUser } = useAuth(); // ✅ This gives us the logged-in user
+  const { currentUser } = useAuth();
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (currentUser) {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        if (userDoc.exists()) {
+          setRole(userDoc.data().role);
+        }
+      }
+    };
+    fetchUserRole();
+  }, [currentUser]);
 
   const sidebarButtonStyle = {
     backgroundColor: 'white',
@@ -40,14 +55,20 @@ const Sidebar = () => {
         Track My Claim
       </button>
 
-      {/* ✅ Only show admin dashboard if user is logged in */}
-      {currentUser && (
+      {/* ✅ Admin-only button */}
+      {role === 'admin' && (
         <button style={sidebarButtonStyle} onClick={() => navigate('/admin-dashboard')}>
           Admin Dashboard
         </button>
       )}
 
-      {/* ✅ Anyone can see Items Collection */}
+      {/* ✅ Security-only button */}
+      {role === 'security' && (
+        <button style={sidebarButtonStyle} onClick={() => navigate('/security-dashboard')}>
+          Security Dashboard
+        </button>
+      )}
+
       <button style={sidebarButtonStyle} onClick={() => navigate('/all-lost-items')}>
         Items Collection
       </button>
