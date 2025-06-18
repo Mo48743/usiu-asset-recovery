@@ -1,5 +1,6 @@
+// src/pages/AllLostItems.js
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import './AllLostItems.css'; // optional: if you want to style your items
 
@@ -23,6 +24,23 @@ const AllLostItems = () => {
     fetchItems();
   }, []);
 
+  const handleClaim = async (itemId) => {
+    const confirm = window.confirm('Do you want to claim this item?');
+    if (!confirm) return;
+
+    try {
+      const itemRef = doc(db, 'lostItems', itemId);
+      await updateDoc(itemRef, { itemStatus: 'Claim Requested' });
+      setLostItems(prev =>
+        prev.map(item => item.id === itemId ? { ...item, itemStatus: 'Claim Requested' } : item)
+      );
+      alert('Your claim has been submitted to the admin.');
+    } catch (error) {
+      console.error('Error submitting claim:', error);
+      alert('Failed to submit claim.');
+    }
+  };
+
   return (
     <div className="all-lost-items-container">
       <h2>Items Collections</h2>
@@ -39,6 +57,13 @@ const AllLostItems = () => {
               <p><strong>Location:</strong> {item.location}</p>
               <p><strong>Reported By:</strong> {item.yourName}</p>
               {item.message && <p><strong>Message:</strong> {item.message}</p>}
+
+              {/* ✨ Claim Button */}
+              {item.itemStatus === 'Found' && (
+                <button onClick={() => handleClaim(item.id)} style={{ marginTop: '0.5rem', backgroundColor: '#1B3B6F', color: 'white', padding: '0.5rem 1rem', border: 'none', borderRadius: '5px' }}>
+                  Claim Item
+                </button>
+              )}
             </li>
           ))}
         </ul>
