@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [items, setItems] = useState([]);
+  const [userCount, setUserCount] = useState(0);
   const navigate = useNavigate();
 
   // 🔐 Check if logged in and is the right admin
@@ -31,7 +32,13 @@ const AdminDashboard = () => {
       setItems(allItems);
     };
 
+    const fetchUsers = async () => {
+      const userSnap = await getDocs(collection(db, 'users')); // adjust to your actual users collection
+      setUserCount(userSnap.size);
+    };
+
     fetchItems();
+    fetchUsers();
   }, []);
 
   // ✏️ Update status
@@ -60,9 +67,29 @@ const AdminDashboard = () => {
     setItems(prev => prev.filter(item => item.id !== itemId));
   };
 
+  // 📊 Stats
+  const totalItems = items.length;
+  const foundItems = items.filter(item => item.itemStatus === 'Found').length;
+  const claimedItems = items.filter(item => item.itemStatus === 'Claimed').length;
+  const lostItems = items.filter(item => item.itemStatus === 'Lost').length;
+
   return (
     <div style={{ padding: '2rem' }}>
       <h2>Admin Dashboard</h2>
+
+      {/* 🔷 Summary Cards */}
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '1rem',
+        marginBottom: '2rem'
+      }}>
+        <div style={cardStyle}><h3>Total Users</h3><p>{userCount}</p></div>
+        <div style={cardStyle}><h3>Total Items</h3><p>{totalItems}</p></div>
+        <div style={cardStyle}><h3>Found Items</h3><p>{foundItems}</p></div>
+        <div style={cardStyle}><h3>Claimed Items</h3><p>{claimedItems}</p></div>
+        <div style={cardStyle}><h3>Pending (Lost)</h3><p>{lostItems}</p></div>
+      </div>
 
       {items.length === 0 ? (
         <p>No items found in the system.</p>
@@ -131,6 +158,17 @@ const AdminDashboard = () => {
       )}
     </div>
   );
+};
+
+// 🔷 Reusable card styling
+const cardStyle = {
+  flex: '1 1 200px',
+  background: '#1B3B6F',
+  color: 'white',
+  padding: '1rem',
+  borderRadius: '10px',
+  textAlign: 'center',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
 };
 
 export default AdminDashboard;
