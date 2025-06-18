@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [items, setItems] = useState([]);
-  const [adminEmail, setAdminEmail] = useState('');
   const navigate = useNavigate();
 
   // 🔐 Check if logged in and is the right admin
@@ -15,8 +14,6 @@ const AdminDashboard = () => {
       if (!user || user.email !== 'morinea@usiu.ac.ke') {
         alert("Access denied. Admins only.");
         navigate('/');
-      } else {
-        setAdminEmail(user.email);
       }
     });
 
@@ -66,7 +63,6 @@ const AdminDashboard = () => {
   return (
     <div style={{ padding: '2rem' }}>
       <h2>Admin Dashboard</h2>
-      <p>Logged in as: <strong>{adminEmail}</strong></p>
 
       {items.length === 0 ? (
         <p>No items found in the system.</p>
